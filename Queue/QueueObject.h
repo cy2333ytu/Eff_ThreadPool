@@ -11,7 +11,7 @@
 namespace ccy
 {
 
-class QueueOject: public ThreadObject{
+class QueueObject: public ThreadObject{
     protected:
         std::mutex mutex_;
         std::condition_variable cv_;

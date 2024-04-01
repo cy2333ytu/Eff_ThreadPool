@@ -2,6 +2,7 @@
 #define THREAD_OBJECT_H
 
 #include "Utils/UtilsObject.h"
+#include "ThreadPoolDefine.h"
 
 namespace ccy
 {

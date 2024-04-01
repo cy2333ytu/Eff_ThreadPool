@@ -23,7 +23,7 @@ class AtomicRingBufferQueue: public QueueObject{
          * 设置容量信息
          * @param size
          * @return
-         * @notice 谨慎使用，push信息之后，不要使用
+         * @notice push信息之后，不要使用
          */
         AtomicRingBufferQueue* setCapacity(unsigned int size) {
             capacity_ = size;

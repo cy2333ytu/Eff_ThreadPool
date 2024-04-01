@@ -9,7 +9,7 @@ namespace ccy
 {
 
 template<typename T>
-class AtomicPriorityQueue: public QueueOject{
+class AtomicPriorityQueue: public QueueObject{
     public:
         AtomicPriorityQueue() = default;
     /**

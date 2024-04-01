@@ -12,7 +12,7 @@ namespace  ccy
 {
 
 template<typename T>
-class AtomicQueue: public QueueOject{
+class AtomicQueue: public QueueObject{
     public:
         AtomicQueue() = default;
 

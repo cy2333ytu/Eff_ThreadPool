@@ -1,12 +1,15 @@
 #include "Queue/AtomicPriorityQueue.h"
 #include "Queue/AtomicQueue.h"
+#include "Queue/WorkStealingQueue.h"
 #include <cassert>
 #include <string>
 #include <thread>
 #include <iostream>
-
+#include <atomic>
 ccy::AtomicPriorityQueue<std::string> queuePrio;
-ccy::AtomicQueue<int> queue;
+// ccy::AtomicQueue<int> queue;
+ccy::WorkStealingQueue<int> queue;
+
 void testPriorityQueue(){
     assert(queuePrio.empty() == true);
     std::string item;
@@ -117,8 +120,94 @@ void testQueue() {
     testEmpty(queue);
 }
 
+void test_single_thread_push_pop() {
+    ccy::WorkStealingQueue<int> queue;
+    
+    // 测试单线程push和pop
+    queue.push(1);
+    queue.push(2);
+    
+    int value;
+    assert(queue.tryPop(value) && value == 2); // pop应该返回2
+    assert(queue.tryPop(value) && value == 1); // pop应该返回1
+    assert(!queue.tryPop(value)); // 队列已空
+
+    std::cout << "test_single_thread_push_pop passed" << std::endl;
+}
+
+void test_single_thread_push_try_steal() {
+    ccy::WorkStealingQueue<int> queue;
+    
+    // 测试单线程push和trySteal
+    queue.push(1);
+    queue.push(2);
+    
+    int value;
+    assert(queue.trySteal(value) && value == 1); // trySteal应该返回1
+    assert(queue.trySteal(value) && value == 2); // trySteal应该返回2
+    assert(!queue.trySteal(value)); // 队列已空
+
+    std::cout << "test_single_thread_push_try_steal passed" << std::endl;
+}
+
+void test_multiple_thread_push_pop() {
+    ccy::WorkStealingQueue<int> queue;
+    std::vector<std::thread> threads;
+    const int num_threads = 10;
+    const int num_pushes_per_thread = 1000;
+
+    // 多线程同时push
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back([&queue, i, num_pushes_per_thread]() {
+            for (int j = 0; j < num_pushes_per_thread; ++j) {
+                queue.push(i * num_pushes_per_thread + j);
+            }
+        });
+    }
+
+    // 等待所有push完成
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    // assert(queue.size() == num_threads * num_pushes_per_thread); // 确保所有元素都push了进去
+
+    // 多线程同时pop
+    std::atomic<int> pop_count{0};
+    threads.clear();
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back([&queue, &pop_count]() {
+            int value;
+            while (queue.tryPop(value)) {
+                ++pop_count;
+            }
+        });
+    }
+
+    // 等待所有pop完成
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    assert(pop_count == num_threads * num_pushes_per_thread); // 确保所有元素都被pop了出来
+    std::cout << "test_multiple_thread_push_pop passed" << std::endl;
+}
+
+void testWorkStealing(){
+    test_single_thread_push_pop();
+    test_single_thread_push_try_steal();
+    test_multiple_thread_push_pop();
+
+    // 这里可以加更多的测试用例，比如测试tryPush, tryPop, 带有优先级的批量pop等等
+
+    std::cout << "All tests passed" << std::endl;
+    
+}
+
 int main() {
     // testPriorityQueue();
-    testQueue();
+    // testQueue();
+    testWorkStealing();
     return 0;
 }
