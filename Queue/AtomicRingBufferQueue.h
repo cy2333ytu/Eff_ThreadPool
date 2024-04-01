@@ -174,13 +174,13 @@ class AtomicRingBufferQueue: public QueueObject{
         }
      
         NO_ALLOWED_COPY(AtomicRingBufferQueue)
-        
+
     private:
         unsigned int head_;                                             // 头结点位置
         unsigned int tail_;                                             // 尾结点位置
         unsigned int capacity_;                                         // 环形缓冲的容量大小
 
-        std::condition_variable push_cv_;                               // 写入的条件变量。为了保持语义完整，也考虑今后多入多出的可能性，不使用 父类中的 cv_了
+        std::condition_variable push_cv_;                               // 写入的条件变量.
         std::condition_variable pop_cv_;                                // 读取的条件变量
 
         std::vector<std::unique_ptr<T> > ring_buffer_queue_;            // 环形缓冲区
