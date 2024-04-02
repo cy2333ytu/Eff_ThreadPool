@@ -75,7 +75,7 @@ class TaskGroup: public ThreadObject{
         }
     private:
         std::vector<DEFAULT_FUNCTION> task_arr_;                // 任务消息
-        long ttl_ = CGRAPH_MAX_BLOCK_TTL;                      // 任务组最大执行耗时(如果是0的话，则表示不阻塞)
+        long ttl_ = CGRAPH_MAX_BLOCK_TTL;                      // 任务组最大执行耗时(0，表示不阻塞)
         CALLBACK_FUNCTION on_finished_ = nullptr;               // 执行函数任务结束
 
         friend class UThreadPool;

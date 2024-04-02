@@ -20,9 +20,9 @@ public:
     /**
      * 初始化函数
      */
-    // virtual STATUS init() {
-    //     CGRAPH_EMPTY_FUNCTION
-    // }
+    virtual Status init() {
+        EMPTY_FUNCTION
+    }
 
     /**
      * 流程处理函数
@@ -32,9 +32,9 @@ public:
     /**
      * 释放函数
      */
-    // virtual STATUS destroy() {
-    //     CGRAPH_EMPTY_FUNCTION
-    // }
+    virtual Status destroy() {
+        EMPTY_FUNCTION
+    }
 
     /**
      * 默认析构函数

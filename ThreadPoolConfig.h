@@ -9,7 +9,7 @@ namespace ccy
 {
 
 struct ThreadPoolConfig{
-    /** 具体值含义，参考UThreadPoolDefine.h文件 */
+    /** 具体值含义，参考ThreadPoolDefine.h文件 */
     int default_thread_size_ = DEFAULT_THREAD_SIZE;
     int secondary_thread_size_ = SECONDARY_THREAD_SIZE;
     int max_thread_size_ = MAX_THREAD_SIZE;

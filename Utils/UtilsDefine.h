@@ -19,13 +19,10 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-/** 开启函数流程 */
-#define FUNCTION_BEGIN                                                  \
-    CStatus status;                                                     \
+/** 无任何功能函数 */
+#define EMPTY_FUNCTION                                               \
+    return Status();                                                   \
 
-/** 结束函数流程 */
-#define FUNCTION_END                                                    \
-    return status;                                                      \
 
 /** 获取当前代码所在的位置信息 */
 #define GET_LOCATE                                                      \
@@ -33,15 +30,39 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
     + " | line = [" + ::std::to_string( __LINE__) + "]")
 
 #define ErrStatus(info)                                                \
-    Status(info, CGRAPH_GET_LOCATE)                                    \
+    Status(info, GET_LOCATE)                                            \
 
 /** 返回异常信息和状态 */
 #define RETURN_ERROR_STATUS(info)                                       \
     return ErrStatus(info);   
 
-#define CGRAPH_ASSERT_INIT(isInit)                                              \
-    if (unlikely((isInit) != is_init_)) {                                       \
-        CGRAPH_RETURN_ERROR_STATUS("init status is not suitable")               \
-    }                                                                           \
+#define ASSERT_INIT(isInit)                                              \
+    if (unlikely((isInit) != is_init_)) {                                \
+        RETURN_ERROR_STATUS("init status is not suitable")               \
+    }                                                                     \
+
+/** 判断传入的多个指针信息，是否为空 */
+#define ASSERT_NOT_NULL(ptr, ...)                                                           \
+    {                                                                                        \
+        const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
+        if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
+    }                                                                                        \
+
+template<typename T, typename... Args>
+Status __ASSERT_NOT_NULL(T t, Args... args) {
+    if (unlikely(t == nullptr)) {
+        return __ASSERT_NOT_NULL(t);
+    }
+
+    return __ASSERT_NOT_NULL(args...);
+}
+
+#ifdef _ENABLE_LIKELY_
+    #define likely(x)   __builtin_expect(!!(x), 1)
+    #define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+    #define likely
+    #define unlikely
+#endif
 
 #endif
