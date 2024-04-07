@@ -1,4 +1,6 @@
 #include "ThreadPool.h"
+#include "./Utils/UtilsDefine.h"
+#include "Allocator.h"
 
 namespace ccy
 {
@@ -39,7 +41,7 @@ Status ThreadPool::init(){
     thread_record_map_.clear();
     primary_threads_.reserve(config_.default_thread_size_);
     for(int i = 0; i < config_.default_thread_size_; i++){
-        auto ptr = SAFE_MALLOC_COBJECT(ThreadPrimary);
+        auto ptr = SAFE_MALLOC_OBJECT(ThreadPrimary);
         ptr->setThreadPoolInfo(i, &task_queue_, &primary_threads_, &config_);
 
         thread_record_map_[(size_t)std::hash<std::thread::id>{}(ptr->thread_.get_id())] = i;
@@ -49,7 +51,13 @@ Status ThreadPool::init(){
     for (auto* pt : primary_threads_) {
         status += pt->init();
     }
+
     FUNCTION_CHECK_STATUS
+    status = createSecondaryThread(config_.secondary_thread_size_);
+    FUNCTION_CHECK_STATUS
+
+    is_init_ = true;
+    return status;
 }
 
 template<typename FunctionType>

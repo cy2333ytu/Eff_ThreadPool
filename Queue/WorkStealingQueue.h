@@ -164,4 +164,4 @@ class WorkStealingQueue: public QueueObject{
 
 }
 
-#endif WORKSTEALINGQUEUE_H
+#endif

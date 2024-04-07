@@ -64,4 +64,4 @@ class LockFreeRingBufferQueue: public QueueObject{
 
 }
 
-#endif LOCKFREERINGBUFFERQUEUE_H
+#endif

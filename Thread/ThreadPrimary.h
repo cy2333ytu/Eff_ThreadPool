@@ -191,4 +191,4 @@ using ThreadPrimaryPtr = ThreadPrimary *;
 
 }
 
-#endif THREADPRIMARY_H
+#endif

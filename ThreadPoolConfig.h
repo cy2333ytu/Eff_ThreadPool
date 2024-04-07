@@ -66,4 +66,4 @@ using ThreadPoolConfigPtr = ThreadPoolConfig *;
 
 }
 
-#endif THREADPOOLCONFIG_H
+#endif

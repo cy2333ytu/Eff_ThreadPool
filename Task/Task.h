@@ -66,4 +66,4 @@ using TaskArrRef = std::vector<Task> &;
 
 }
 
-#endif TASK_H
+#endif

@@ -6,7 +6,7 @@
 #include "StrDefine.h"
 #include "Object.h"
 #include "Exception.h"
-
+#include "Struct.h"
 
 
 #endif 

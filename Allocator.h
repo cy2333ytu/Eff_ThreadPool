@@ -89,4 +89,5 @@ private:
     Allocator::makeUniqueCObject<Type>();                       \
 
 }
-#endif //CGRAPH_UALLOCATOR_H
+
+#endif

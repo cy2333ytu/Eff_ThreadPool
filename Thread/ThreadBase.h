@@ -199,4 +199,4 @@ protected:
 
 }
 
-#endif THREADBASE_H
+#endif

@@ -63,9 +63,9 @@ static std::mutex g_check_status_mtx;
         if (status.isCrash()) { throw Exception(status.getInfo()); }                        \
         LOCK_GUARD lock{ g_check_status_mtx };                                              \
         std::cout << status.getLocate().c_str() << "errorCode = " << status.getCode() << "," \
-            << "errorInfo = " << status.getInfo().c_str() << "\n";
-        return Status;                                                                   
-    }
+            << "errorInfo = " << status.getInfo().c_str() << "\n";                           \
+        return status;                                                                         \
+    }                                                                                           \
 
 template<typename T, typename... Args>
 Status __ASSERT_NOT_NULL(T t, Args... args) {

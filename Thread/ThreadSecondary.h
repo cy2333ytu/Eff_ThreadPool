@@ -111,4 +111,4 @@ using ThreadSecondaryPtr = ThreadSecondary *;
 }
 
 
-#endif THREADSECONDARY_H
+#endif
