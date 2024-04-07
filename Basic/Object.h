@@ -6,6 +6,7 @@
 #define CGRAPH_COBJECT_H
 
 #include "Status.h"
+#include "../Utils/UtilsDefine.h"
 
 namespace ccy
 {

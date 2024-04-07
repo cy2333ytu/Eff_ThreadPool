@@ -130,7 +130,7 @@ public:
 private:
     int error_code_ = STATUS_OK;                     // 错误码信息
     std::string error_info_;                         // 错误信息描述
-    std::string error_locate_;                       // 错误发生的具体位置，形如：file|function|line
+    std::string error_locate_;                       // 错误发生的具体位置，如：file|function|line
 };
 
 using Status = STATUS;

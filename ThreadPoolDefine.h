@@ -1,5 +1,6 @@
 #ifndef THREADPOOLDEFINE_H
 #define THREADPOOLDEFINE_H
+#include<thread>
 
 namespace ccy
 {
@@ -41,6 +42,8 @@ static const int SECONDARY_THREAD_POLICY = THREAD_SCHED_OTHER;                  
 static const int PRIMARY_THREAD_PRIORITY = THREAD_MIN_PRIORITY;                     // 主线程调度优先级（取值范围0~99，配合调度策略一起使用，不建议不了解相关内容的童鞋做修改）
 static const int SECONDARY_THREAD_PRIORITY = THREAD_MIN_PRIORITY;                   // 辅助线程调度优先级（同上）
 
-
+static const int DEFAULT_TASK_STRATEGY = -1;                                         // 默认线程调度策略
+static const int POOL_TASK_STRATEGY = -2;                                            // 固定用pool中的队列的调度策略
+static const int LONG_TIME_TASK_STRATEGY = -101;                                     // 长时间任务调度策略
 }
 #endif

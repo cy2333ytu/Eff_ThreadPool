@@ -2,13 +2,19 @@
 #define UTILS_DEFINE
 
 #include "../Basic/Status.h"
+#include "../Basic/BasicInclude.h"
+
 #include <mutex>
 #include <memory>
-
+#include <iostream>
 
 using Status = ccy::STATUS;
 using LOCK_GUARD = std::lock_guard<std::mutex>;
 using UNIQUE_LOCK = std::unique_lock<std::mutex>;
+using Exception = ccy::EXCEPTION;
+
+template<bool B, typename T = void>
+using c_enable_if_t = typename std::enable_if<B, T>::type;
 
 #define NO_ALLOWED_COPY(Type)                                          \
     Type(const Type &) = delete;                                      \
@@ -19,10 +25,12 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
+#define EMPTY_FUNCTION                                                  \
+    return Status();                                                   \
+
 /** 无任何功能函数 */
 #define EMPTY_FUNCTION                                               \
     return Status();                                                   \
-
 
 /** 获取当前代码所在的位置信息 */
 #define GET_LOCATE                                                      \
@@ -47,6 +55,17 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
         const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
         if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
     }                                                                                        \
+
+/* 判断函数流程是否可以继续 */
+static std::mutex g_check_status_mtx;
+#define FUNCTION_CHECK_STATUS                                                               \
+    if (unlikely(status.isErr())) {                                                          \
+        if (status.isCrash()) { throw Exception(status.getInfo()); }                        \
+        LOCK_GUARD lock{ g_check_status_mtx };                                              \
+        std::cout << status.getLocate().c_str() << "errorCode = " << status.getCode() << "," \
+            << "errorInfo = " << status.getInfo().c_str() << "\n";
+        return Status;                                                                   
+    }
 
 template<typename T, typename... Args>
 Status __ASSERT_NOT_NULL(T t, Args... args) {
