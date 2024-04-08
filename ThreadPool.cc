@@ -1,6 +1,7 @@
 #include "ThreadPool.h"
 #include "./Utils/UtilsDefine.h"
 #include "Allocator.h"
+#include <vector>
 
 namespace ccy
 {
@@ -43,7 +44,8 @@ Status ThreadPool::init(){
     for(int i = 0; i < config_.default_thread_size_; i++){
         auto ptr = SAFE_MALLOC_OBJECT(ThreadPrimary);
         ptr->setThreadPoolInfo(i, &task_queue_, &primary_threads_, &config_);
-
+    
+        // 记录线程和匹配id信息
         thread_record_map_[(size_t)std::hash<std::thread::id>{}(ptr->thread_.get_id())] = i;
         primary_threads_.emplace_back(ptr);
     }
@@ -103,7 +105,82 @@ auto ThreadPool::commitWithPriority(const FunctionType& func, int priority)
         return result;
     }
 
+Status ThreadPool::submit(const TaskGroup& taskGroup, long ttl){
+    Status status;
+    ASSERT_INIT(true)
 
+    std::vector<std::future<void>> futures;
+    for(const auto& task: taskGroup.task_arr_){
+        futures.emplace_back(commit(task));
+    }
+    // 计算运行时间
+    auto deadline = std::chrono::steady_clock::now()
+            + std::chrono::milliseconds(std::min(taskGroup.getTtl(), ttl));
+
+    for(auto& fut: futures){
+        const auto& futStatus = fut.wait_until(deadline);
+        switch (futStatus)
+        {
+            case std::future_status::ready: break;     // 正常情况，返回
+            case std::future_status::timeout: status += ErrStatus("thread status timeout"); break;  
+            case std::future_status::deferred: status += ErrStatus("thread status deferred"); break; 
+
+            default: status += ErrStatus("thread status unknown");
+        }
+    }
+
+    if(taskGroup.on_finished_){
+        taskGroup.on_finished_(status);
+    }
+    return status;
+}
+
+Status ThreadPool::submit(DEFAULT_CONST_FUNCTION_REF func, long ttl,
+                   CALLBACK_CONST_FUNCTION_REF onFinished)
+            {
+                return submit(TaskGroup(func, ttl, onFinished));
+            }
+
+int ThreadPool::getThreadIndex(size_t tid){
+    int threadNum = SECONDARY_THREAD_COMMON_ID;
+    auto result = thread_record_map_.find(tid);
+    if(result != thread_record_map_.end()){
+        threadNum = result->second;
+    }
+    return threadNum;
+}
+
+Status ThreadPool::destroy(){
+    Status status;
+    if(!is_init_){
+        return status;
+    }
+    // delete primary
+    for(auto &pt : primary_threads_){
+        status += pt->destroy();
+    }
+    FUNCTION_CHECK_STATUS
+    
+    for (auto &pt : primary_threads_) {
+        DELETE_PTR(pt)
+    }
+    primary_threads_.clear();
+
+    // secondary is intel
+    for(auto &st: secondary_threads_){
+        status += st->destroy();
+    }
+    FUNCTION_CHECK_STATUS
+    secondary_threads_.clear();
+    thread_record_map_.clear();
+    is_init_ = false;
+
+    return status;
+}
+
+bool ThreadPool::isInit() const{
+    return is_init_;
+}
 
 
 }

@@ -78,7 +78,7 @@ class TaskGroup: public ThreadObject{
         long ttl_ = CGRAPH_MAX_BLOCK_TTL;                      // 任务组最大执行耗时(0，表示不阻塞)
         CALLBACK_FUNCTION on_finished_ = nullptr;               // 执行函数任务结束
 
-        friend class UThreadPool;
+        friend class ThreadPool;
         NO_ALLOWED_COPY(TaskGroup)
 };
 using TaskGroupPtr = TaskGroup *;

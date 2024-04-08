@@ -54,7 +54,13 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
     {                                                                                        \
         const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
         if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
-    }                                                                                        \
+    }
+                                                                                        \
+#define DELETE_PTR(ptr)                                                         \
+    if (unlikely((ptr) != nullptr)) {                                           \
+        delete (ptr);                                                           \
+        (ptr) = nullptr;                                                        \
+    }                                                                           \
 
 /* 判断函数流程是否可以继续 */
 static std::mutex g_check_status_mtx;

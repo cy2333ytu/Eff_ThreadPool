@@ -103,7 +103,7 @@ protected:
 private:
     int cur_ttl_ = 0;                                              // 当前最大生存周期
 
-    friend class UThreadPool;
+    friend class ThreadPool;
 };
 
 using ThreadSecondaryPtr = ThreadSecondary *;
