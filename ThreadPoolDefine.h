@@ -6,7 +6,6 @@ namespace ccy
 {
 
 static const int CPU_NUM = (int)std::thread::hardware_concurrency();
-static const int THREAD_TYPE_PRIMARY = 1;
 static const int THREAD_TYPE_SECONDARY = 2;
 
 static const unsigned int DEFAULT_RINGBUFFER_SIZE = 1024;                           // 默认环形队列的大小

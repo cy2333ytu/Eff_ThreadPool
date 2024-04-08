@@ -82,6 +82,43 @@ protected:
             runTask(task);
         }
     }
+    
+    void processTasks() override {
+        TaskArr tasks;
+        if (popTask(tasks) || popPoolTask(tasks) || stealTask(tasks)) {
+            // 尝试从主线程中获取/盗取批量task，如果成功，则依次执行
+            runTasks(tasks);
+        } else {
+            fatWait();
+        }
+    }
+    /**
+     * 如果总是进入无task的状态，则开始休眠
+     * 休眠一定时间后，然后恢复执行状态
+     */
+    void fatWait() {
+        cur_empty_epoch_++;
+        std::this_thread::yield();
+        if (cur_empty_epoch_ >= config_->primary_thread_busy_epoch_) {
+            UNIQUE_LOCK lk(mutex_);
+            cv_.wait_for(lk, std::chrono::milliseconds(config_->primary_thread_empty_interval_));
+            cur_empty_epoch_ = 0;
+        }
+    }
+
+
+    /**
+     * 依次push到任一队列里。如果都失败，则yield，然后重新push
+     * @param task
+     * @return
+     */
+    void pushTask(Task&& task) {
+        while (!(primary_queue_.tryPush(std::move(task))
+                 || secondary_queue_.tryPush(std::move(task)))) {
+            std::this_thread::yield();
+        }
+        cv_.notify_one();
+    }
 
     /**
      * 从本地弹出一个任务
@@ -92,6 +129,21 @@ protected:
         return primary_queue_.tryPop(task) || secondary_queue_.tryPop(task);
     }
 
+    /**
+     * 从本地弹出一批任务
+     * @param tasks
+     * @return
+     */
+    bool popTask(TaskArrRef tasks) {
+        bool result = primary_queue_.tryPop(tasks, config_->max_local_batch_size_);
+        auto leftSize = config_->max_local_batch_size_ - tasks.size();
+        if (leftSize > 0) {
+            // 如果凑齐了，就不需要了。没凑齐的话，就继续
+            result |= (secondary_queue_.tryPop(tasks, leftSize));
+        }
+        return result;
+    }
+    
     /**
      * 从其他线程窃取一个任务
      * @param task

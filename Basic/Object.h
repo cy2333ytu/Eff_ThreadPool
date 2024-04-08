@@ -2,8 +2,8 @@
 @Desc: 所有类型的父节点，其中run()方法必须实现
 ***************************/
 
-#ifndef CGRAPH_COBJECT_H
-#define CGRAPH_COBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include "Status.h"
 #include "../Utils/UtilsDefine.h"
@@ -22,7 +22,7 @@ public:
      * 初始化函数
      */
     virtual Status init() {
-        EMPTY_FUNCTION
+        return Status();
     }
 
     /**
@@ -34,7 +34,7 @@ public:
      * 释放函数
      */
     virtual Status destroy() {
-        EMPTY_FUNCTION
+        return Status();
     }
 
     /**
@@ -45,4 +45,5 @@ public:
 
 
 }
+
 #endif

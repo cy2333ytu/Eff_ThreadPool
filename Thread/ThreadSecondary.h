@@ -21,7 +21,7 @@ protected:
         
         cur_ttl_ = config_->secondary_thread_ttl_;
         is_init_ = true;
-        thread_ = std::move(std::thread(&ThreadSecondary::run(), this));
+        thread_ = std::move(std::thread(&ThreadSecondary::run, this));
         setSchedParam();
         return status;
     }

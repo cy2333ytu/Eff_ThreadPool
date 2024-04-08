@@ -6,7 +6,7 @@
 namespace ccy
 {
 
-ThreadPool::ThreadPool(bool autoInit = true, const ThreadPoolConfig& config) noexcept
+ThreadPool::ThreadPool(bool autoInit, const ThreadPoolConfig& config) noexcept
     {
         cur_index_ = 0;
         is_init_ = false;
@@ -61,49 +61,6 @@ Status ThreadPool::init(){
     is_init_ = true;
     return status;
 }
-
-template<typename FunctionType>
-auto ThreadPool::commit(const FunctionType& func, int index)
-    -> std::future<decltype(std::declval<FunctionType>()())>
-    {
-        using RetType = decltype(std::declval<FunctionType>()());
-
-        std::packaged_task<RetType()> task(func);
-        std::future<RetType> result(task.get_future());
-
-        int realIndex = dispatch(index);
-        if(realIndex >= 0 && realIndex < config_.default_thread_size_){
-            // 如果返回的结果，在主线程数量之间，则放到主线程的queue中执行
-            primary_threads_[realIndex]->pushTask(std::move(task));
-        }else if(LONG_TIME_TASK_STRATEGY == realIndex){
-            /**
-             * 如果是长时间任务，则交给特定的任务队列，仅由辅助线程处理
-             * 目的是防止有很多长时间任务，将所有运行的线程均阻塞
-             * 长任务程序，默认优先级较低
-             **/
-            priority_task_queue_.push(std::move(task), LONG_TIME_TASK_STRATEGY);
-        }else{
-            task_queue_.push(std::move(task));
-        }
-        return result;
-    }
-
-template<typename FunctionType>
-auto ThreadPool::commitWithPriority(const FunctionType& func, int priority)
-    -> std::future<decltype(std::declval<FunctionType>()())>
-    {
-        using ResultType = decltype(std::declval<FunctionType>()());
-
-        std::packaged_task<ResultType()> task(func);
-        std::future<ResultType> result(task.get_future());
-
-        if(secondary_threads_.empty()){
-            createSecondaryThread(1);
-        }
-        priority_task_queue_(Std::move(task), priority);
-        
-        return result;
-    }
 
 Status ThreadPool::submit(const TaskGroup& taskGroup, long ttl){
     Status status;

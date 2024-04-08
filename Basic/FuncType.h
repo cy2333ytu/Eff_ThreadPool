@@ -17,4 +17,4 @@ using CALLBACK_FUNCTION = std::function<void(Status)>;
 
 }
 
-#endif FUNCTYPE_H
+#endif

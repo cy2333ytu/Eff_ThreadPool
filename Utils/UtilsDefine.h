@@ -7,11 +7,20 @@
 #include <mutex>
 #include <memory>
 #include <iostream>
+namespace ccy
+{
 
-using Status = ccy::STATUS;
 using LOCK_GUARD = std::lock_guard<std::mutex>;
 using UNIQUE_LOCK = std::unique_lock<std::mutex>;
 using Exception = ccy::EXCEPTION;
+
+#ifdef _ENABLE_LIKELY_
+    #define likely(x)   __builtin_expect(!!(x), 1)
+    #define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+    #define likely
+    #define unlikely
+#endif
 
 template<bool B, typename T = void>
 using c_enable_if_t = typename std::enable_if<B, T>::type;
@@ -25,12 +34,6 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-#define EMPTY_FUNCTION                                                  \
-    return Status();                                                   \
-
-/** 无任何功能函数 */
-#define EMPTY_FUNCTION                                               \
-    return Status();                                                   \
 
 /** 获取当前代码所在的位置信息 */
 #define GET_LOCATE                                                      \
@@ -49,13 +52,11 @@ typename std::unique_ptr<T> c_make_unique(Args&&... args) {
         RETURN_ERROR_STATUS("init status is not suitable")               \
     }                                                                     \
 
-/** 判断传入的多个指针信息，是否为空 */
-#define ASSERT_NOT_NULL(ptr, ...)                                                           \
-    {                                                                                        \
-        const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
-        if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
-    }
-                                                                                        \
+/** 根据条件判断是否返回错误状态 */
+#define RETURN_ERROR_STATUS_BY_CONDITION(cond, info)                    \
+    if (unlikely(cond)) { RETURN_ERROR_STATUS(info); }                  \
+
+
 #define DELETE_PTR(ptr)                                                         \
     if (unlikely((ptr) != nullptr)) {                                           \
         delete (ptr);                                                           \
@@ -73,6 +74,13 @@ static std::mutex g_check_status_mtx;
         return status;                                                                         \
     }                                                                                           \
 
+template<typename T>
+Status __ASSERT_NOT_NULL(T t) {
+    return (unlikely(nullptr == t))
+           ? ErrStatus(INPUT_IS_NULL)
+           : Status();
+}
+
 template<typename T, typename... Args>
 Status __ASSERT_NOT_NULL(T t, Args... args) {
     if (unlikely(t == nullptr)) {
@@ -82,12 +90,12 @@ Status __ASSERT_NOT_NULL(T t, Args... args) {
     return __ASSERT_NOT_NULL(args...);
 }
 
-#ifdef _ENABLE_LIKELY_
-    #define likely(x)   __builtin_expect(!!(x), 1)
-    #define unlikely(x) __builtin_expect(!!(x), 0)
-#else
-    #define likely
-    #define unlikely
-#endif
+/** 判断传入的多个指针信息，是否为空 */
+#define ASSERT_NOT_NULL(ptr, ...)                                                     \
+    {                                                                                        \
+        const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
+        if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
+    }                                                                                   \
 
+}
 #endif

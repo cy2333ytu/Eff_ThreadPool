@@ -76,18 +76,18 @@ class AtomicRingBufferQueue: public QueueObject{
          * @return
          */
         template<class TImpl = T>
-        CVoid push(std::unique_ptr<TImpl>& value, URingBufferPushStrategy strategy) {
+        void push(std::unique_ptr<TImpl>& value, RingBufferPushStrategy strategy) {
             {
-                CGRAPH_UNIQUE_LOCK lk(mutex_);
+                UNIQUE_LOCK lk(mutex_);
                 if (isFull()) {
                     switch (strategy) {
-                        case URingBufferPushStrategy::WAIT:
+                        case RingBufferPushStrategy::WAIT:
                             push_cv_.wait(lk, [this] { return !isFull(); });
                             break;
-                        case URingBufferPushStrategy::REPLACE:
+                        case RingBufferPushStrategy::REPLACE:
                             head_ = (head_ + 1) % capacity_;
                             break;
-                        case URingBufferPushStrategy::DROP:
+                        case RingBufferPushStrategy::DROP:
                             return;    // 直接返回，不写入即可
                     }
                 }
@@ -120,6 +120,7 @@ class AtomicRingBufferQueue: public QueueObject{
             }
             push_cv_.notify_one();
             return status;
+
         }
         /**
          * 等待弹出信息: 传入的参数为智能指针
@@ -128,7 +129,7 @@ class AtomicRingBufferQueue: public QueueObject{
          * @return
          */
         template<class TImpl = T>
-        Status waitPopWithTimeout(TImpl& value, long timeout){
+        Status waitPopWithTimeout(std::unique_ptr<TImpl>& value, long timeout){
             Status status;
             {
                 UNIQUE_LOCK lk(mutex_);

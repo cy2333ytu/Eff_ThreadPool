@@ -16,17 +16,17 @@ class Task: public ThreadObject{
         virtual ~taskBased() = default;
     };
     
-    template<typename F, typename = typename std::decay<F>::type>
-    struct taskDerived: taskBased
-    {
+    template<typename F, typename T = typename std::decay<F>::type>
+    struct taskDerided : taskBased {
         T func_;
-        explicit taskDerived(F&& func): func_(std::forward<F>(func)){}
-        void call() override {func_();}
+        explicit taskDerided(F&& func) : func_(std::forward<F>(func)) {}
+        void call() override { func_(); }
     };
+
 public:
     template<typename F>
     Task(F&& f, int priority = 0)
-        : impl_(new taskDerived<F>(std::forward<F>(f)))
+        : impl_(new taskDerided<F>(std::forward<F>(f)))
         , priority_(priority){}
     
     void operator()(){

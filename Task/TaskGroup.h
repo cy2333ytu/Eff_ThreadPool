@@ -10,6 +10,7 @@ namespace ccy
 class TaskGroup: public ThreadObject{
     public:
         explicit TaskGroup() = default;
+        NO_ALLOWED_COPY(TaskGroup)
         /**
          * 直接通过函数来申明taskGroup
          * @param task
@@ -20,14 +21,16 @@ class TaskGroup: public ThreadObject{
                             long ttl = MAX_BLOCK_TTL,
                             CALLBACK_CONST_FUNCTION_REF onFinished = nullptr) noexcept
                 {
-                    
+                    this->addTask(task)
+                        ->setTtl(ttl)
+                        ->setOnFinished(onFinished);
                 }
 
         /**
          * 添加一个任务
          * @param task
         */
-        TaskGroup* addTask(CALLBACK_CONST_FUNCTION_REF task){
+        TaskGroup* addTask(DEFAULT_CONST_FUNCTION_REF task){
             task_arr_.emplace_back(task);
             return this;
         }
@@ -75,11 +78,10 @@ class TaskGroup: public ThreadObject{
         }
     private:
         std::vector<DEFAULT_FUNCTION> task_arr_;                // 任务消息
-        long ttl_ = CGRAPH_MAX_BLOCK_TTL;                      // 任务组最大执行耗时(0，表示不阻塞)
+        long ttl_ = MAX_BLOCK_TTL;                              // 任务组最大执行耗时(0，表示不阻塞)
         CALLBACK_FUNCTION on_finished_ = nullptr;               // 执行函数任务结束
 
         friend class ThreadPool;
-        NO_ALLOWED_COPY(TaskGroup)
 };
 using TaskGroupPtr = TaskGroup *;
 using TaskGroupRef = TaskGroup &;
