@@ -9,6 +9,9 @@ int add(int i, int j) {
 static float minusBy5(float i) {
     return i - 5.0f;
 }
+static float minusBy6(float i, int j, int k) {
+    return i + j + k;
+}
 
 
 class MyFunction {

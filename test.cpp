@@ -21,10 +21,10 @@ inline void ECHO(const char *cmd, ...) {
     std::cout << "\n";
 }
 
-#define SLEEP_MILLISECOND(ms)                                            \
+#define SLEEP_MILLISECOND(ms)                                                   \
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));                 \
 
-#define SLEEP_SECOND(s)                                                  \
+#define SLEEP_SECOND(s)                                                         \
     std::this_thread::sleep_for(std::chrono::seconds(s));                       \
 
 using namespace ccy;
@@ -43,6 +43,7 @@ void tutorial_threadpool_1(ThreadPoolPtr tp) {
 
     auto r1 = tp->commit([i, j] { return add(i, j); });    // 可以通过lambda表达式传递函数
     std::future<float> r2 = tp->commit(std::bind(minusBy5, 8.5f));    // 可以传入任意个数的入参
+    std::future<float> r5 = tp->commit(std::bind(minusBy6, 8.5f, 1, 2));    // 可以传入任意个数的入参
     auto r3 = tp->commit(std::bind(&MyFunction::concat, mf, str));    // 返回值可以是任意类型
     std::future<int> r4 = tp->commit([i, j] { return MyFunction::multiply(i, j); });    // 返回值实际上是std::future<T>类型
 
@@ -50,6 +51,7 @@ void tutorial_threadpool_1(ThreadPoolPtr tp) {
     std::cout << r2.get() << std::endl;    // 等待r2对应函数执行完毕后，再继续执行。不调用get()为不等待
     std::cout << r3.get() << std::endl;    // 返回值也可是string或其他任意类型
     std::cout << r4.get() << std::endl;
+    std::cout << r5.get() << std::endl;
 }
 
 
@@ -68,12 +70,12 @@ void tutorial_threadpool_2(ThreadPoolPtr tp) {
     taskGroup.addTask([i, j] {
         int result = i + j;
         SLEEP_MILLISECOND(1000)
-        ECHO("sleep for 1 second, [%d] + [%d] = [%d], run success.", i, j, result);
+        // ECHO("sleep for 1 second, [%d] + [%d] = [%d], run success.", i, j, result);
     });
 
     taskGroup.addTask([i, j, k] {
         int result = i - j + k;
-        SLEEP_MILLISECOND(2000)
+        // SLEEP_MILLISECOND(3000)
         ECHO("sleep for 2 second, [%d] - [%d] + [%d] = [%d], run success.", i, j, k, result);
         return result;    // submit接口，不会对线程函数返回值进行判断。如果需要判断，考虑commit方式
     });
@@ -101,7 +103,7 @@ void tutorial_threadpool_2(ThreadPoolPtr tp) {
      * 并且在status中提示超时信息
      * */
     Status status = tp->submit(taskGroup, 2500);
-    ECHO("task group run status is [%d].", status.getCode());
+    // ECHO("task group run status is [%d].", status.getCode());
 }
 
 
@@ -113,12 +115,12 @@ void tutorial_threadpool_3(ThreadPoolPtr tp) {
      * 2，submit()属于阻塞顺序执行，是在内部处理好超时等信息并作为结果返回，抛弃线程函数自身返回值
      * 3，不需要线程函数返回值，并且不需要判断超时信息的场景，两者无区别（如下例）
      */
-    const int size = 100;
+    const int size = 10000;
     ECHO("thread pool task submit version : ");
     for (int i = 0; i < size; i++) {
         tp->submit([i] { std::cout << i << " "; });    // 可以看到，submit版本是有序执行的。如果需要想要无序执行，可以通过创建taskGroup的方式进行，或者使用commit方法
     }
-    SLEEP_SECOND(1)    // 等待上面函数执行完毕，以便于观察结果。无实际意义
+    // SLEEP_SECOND(1)    // 等待上面函数执行完毕，以便于观察结果。无实际意义
     std::cout << "\r\n";
 
     ECHO("thread pool task group submit version : ");
@@ -137,17 +139,38 @@ void tutorial_threadpool_3(ThreadPoolPtr tp) {
     SLEEP_SECOND(1)
     std::cout << "\r\n";
 }
-
+void tutorial_threadpool_4(ThreadPoolPtr tp) {
+    
+    const int size = 10000;
+    int i = 0;
+    // ECHO("thread pool task submit version : ");
+    for (; i < size; i++) {
+        tp->submit([&i] {  i++;});    // 可以看到，submit版本是有序执行的。如果需要想要无序执行，可以通过创建taskGroup的方式进行，或者使用commit方法
+    }
+    // SLEEP_SECOND(1)    // 等待上面函数执行完毕，以便于观察结果。无实际意义
+    // std::cout << "\r\n";
+}
 
 int main() {
     std::unique_ptr<ThreadPool> pool(new ThreadPool());    // 构造一个线程池类的智能指针
-    ECHO("======== tutorial_threadpool_1 begin. ========");
-    tutorial_threadpool_1(pool.get());
+    // ECHO("======== tutorial_threadpool_1 begin. ========");
+    auto start = std::chrono::high_resolution_clock::now();
+    // tutorial_threadpool_1(pool.get());
 
-    ECHO("======== tutorial_threadpool_2 begin. ========");
-    tutorial_threadpool_2(pool.get());
+    // ECHO("======== tutorial_threadpool_2 begin. ========");
+    // tutorial_threadpool_2(pool.get());
 
     ECHO("======== tutorial_threadpool_3 begin. ========");
     tutorial_threadpool_3(pool.get());
+    // ECHO("======== tutorial_threadpool_4 begin. ========");
+    // tutorial_threadpool_4(pool.get());
+    
+
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << "Time taken to execute tasks: " << elapsed.count() << " seconds\n";
+
     return 0;
 }
