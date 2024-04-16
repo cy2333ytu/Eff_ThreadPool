@@ -81,9 +81,9 @@ void tutorial_threadpool_2(ThreadPoolPtr tp) {
     });
 
     /** 如果添加耗时3000ms的任务，则整体执行失败 */
-    /* taskGroup.addTask([] {
+    taskGroup.addTask([] {
           SLEEP_MILLISECOND(3000)
-     }); */
+     }); 
 
     /**
      * 可以添加执行task group结束后的回调信息

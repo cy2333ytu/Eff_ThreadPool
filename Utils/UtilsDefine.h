@@ -7,6 +7,7 @@
 #include <mutex>
 #include <memory>
 #include <iostream>
+
 namespace ccy
 {
 
@@ -91,11 +92,12 @@ Status __ASSERT_NOT_NULL(T t, Args... args) {
 }
 
 /** 判断传入的多个指针信息，是否为空 */
-#define ASSERT_NOT_NULL(ptr, ...)                                                     \
+#define ASSERT_NOT_NULL(ptr, ...)                                                           \
     {                                                                                        \
         const Status& __cur_status__ = __ASSERT_NOT_NULL(ptr, ##__VA_ARGS__);               \
         if (unlikely(__cur_status__.isErr())) { return __cur_status__; }                     \
-    }                                                                                   \
+    }                                                                                          \
 
 }
 #endif
+

@@ -64,6 +64,7 @@ CMAKE_BINARY_DIR = /home/ccy/Desktop/Eff_ThreadPool/build
 
 # The main recursive "all" target.
 all: CMakeFiles/EThreadPool.dir/all
+all: CMakeFiles/testEThreadPool.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,6 +73,7 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/EThreadPool.dir/clean
+clean: CMakeFiles/testEThreadPool.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -99,6 +101,32 @@ EThreadPool: CMakeFiles/EThreadPool.dir/rule
 CMakeFiles/EThreadPool.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/clean
 .PHONY : CMakeFiles/EThreadPool.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/testEThreadPool.dir
+
+# All Build rule for target.
+CMakeFiles/testEThreadPool.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ccy/Desktop/Eff_ThreadPool/build/CMakeFiles --progress-num=4,5,6 "Built target testEThreadPool"
+.PHONY : CMakeFiles/testEThreadPool.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/testEThreadPool.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ccy/Desktop/Eff_ThreadPool/build/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/testEThreadPool.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ccy/Desktop/Eff_ThreadPool/build/CMakeFiles 0
+.PHONY : CMakeFiles/testEThreadPool.dir/rule
+
+# Convenience name for target.
+testEThreadPool: CMakeFiles/testEThreadPool.dir/rule
+.PHONY : testEThreadPool
+
+# clean rule for target.
+CMakeFiles/testEThreadPool.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/clean
+.PHONY : CMakeFiles/testEThreadPool.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

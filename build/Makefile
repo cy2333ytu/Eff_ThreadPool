@@ -129,12 +129,26 @@ EThreadPool/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/build
 .PHONY : EThreadPool/fast
 
+#=============================================================================
+# Target rules for targets named testEThreadPool
+
+# Build rule for target.
+testEThreadPool: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testEThreadPool
+.PHONY : testEThreadPool
+
+# fast build rule for target.
+testEThreadPool/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/build
+.PHONY : testEThreadPool/fast
+
 ThreadPool.o: ThreadPool.cc.o
 .PHONY : ThreadPool.o
 
 # target to build an object file
 ThreadPool.cc.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/ThreadPool.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/ThreadPool.cc.o
 .PHONY : ThreadPool.cc.o
 
 ThreadPool.i: ThreadPool.cc.i
@@ -143,6 +157,7 @@ ThreadPool.i: ThreadPool.cc.i
 # target to preprocess a source file
 ThreadPool.cc.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/ThreadPool.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/ThreadPool.cc.i
 .PHONY : ThreadPool.cc.i
 
 ThreadPool.s: ThreadPool.cc.s
@@ -151,6 +166,7 @@ ThreadPool.s: ThreadPool.cc.s
 # target to generate assembly for a file
 ThreadPool.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/ThreadPool.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/ThreadPool.cc.s
 .PHONY : ThreadPool.cc.s
 
 benchmark.o: benchmark.cpp.o
@@ -177,6 +193,30 @@ benchmark.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EThreadPool.dir/build.make CMakeFiles/EThreadPool.dir/benchmark.cpp.s
 .PHONY : benchmark.cpp.s
 
+testfunc.o: testfunc.cpp.o
+.PHONY : testfunc.o
+
+# target to build an object file
+testfunc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/testfunc.cpp.o
+.PHONY : testfunc.cpp.o
+
+testfunc.i: testfunc.cpp.i
+.PHONY : testfunc.i
+
+# target to preprocess a source file
+testfunc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/testfunc.cpp.i
+.PHONY : testfunc.cpp.i
+
+testfunc.s: testfunc.cpp.s
+.PHONY : testfunc.s
+
+# target to generate assembly for a file
+testfunc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testEThreadPool.dir/build.make CMakeFiles/testEThreadPool.dir/testfunc.cpp.s
+.PHONY : testfunc.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -186,12 +226,16 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... EThreadPool"
+	@echo "... testEThreadPool"
 	@echo "... ThreadPool.o"
 	@echo "... ThreadPool.i"
 	@echo "... ThreadPool.s"
 	@echo "... benchmark.o"
 	@echo "... benchmark.i"
 	@echo "... benchmark.s"
+	@echo "... testfunc.o"
+	@echo "... testfunc.i"
+	@echo "... testfunc.s"
 .PHONY : help
 
 
