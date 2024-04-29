@@ -25,9 +25,9 @@ add_executable(bench2
         )
 target_link_libraries(bench2 benchmark::benchmark pthread)
 
-# add_executable(bench3
-#         ${SRC_LIST}
-#         bench1.cc
-#         ../ThreadPool.cc
-#         )
-# target_link_libraries(bench3 benchmark::benchmark pthread)
+add_executable(bench3
+        ${SRC_LIST}
+        bench3.cc
+        ../ThreadPool.cc
+        )
+target_link_libraries(bench3 benchmark::benchmark pthread)

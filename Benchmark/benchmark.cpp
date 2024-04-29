@@ -24,7 +24,8 @@ static void BM_SimpleThreadPool(benchmark::State& state) {
         state.ResumeTiming();
 
         for (int i = 0; i < state.range(1); ++i) {
-            futures.emplace_back(pool.commit(std::bind(simpleWork, i, i)));
+            auto task = []{};
+            futures.emplace_back(pool.commit(task));
         }
 
         for (auto &f : futures) {
@@ -35,15 +36,11 @@ static void BM_SimpleThreadPool(benchmark::State& state) {
 
 // 使用不同的线程数和工作量来运行测试
 BENCHMARK(BM_SimpleThreadPool)
-    ->Args({1, 1000})       // 1个线程, 1000个工作项
-    ->Args({4, 1000})       // 4个线程, 1000个工作项
-    ->Args({8, 1000})       // 8个线程, 1000个工作项
-    ->Args({1, 10000})      // 1个线程, 10000个工作项
-    ->Args({4, 10000})      // 4个线程, 10000个工作项
-    ->Args({8, 10000})     // 8个线程, 10000个工作项
-    ->Args({8, 100000})     // 8个线程, 100000个工作项
-    ->Args({8, 200000})     // 8个线程, 200000个工作项
-    ->Args({8, 400000})     // 8个线程, 400000个工作项
-    ->Args({8, 800000});     // 8个线程, 800000个工作项
+    ->Args({16, 10000})     // 16个线程, 10000个工作项
+    ->Args({16, 100000})     // 16个线程, 100000个工作项
+    ->Args({16, 200000})     // 16个线程, 200000个工作项
+    ->Args({16, 400000})     // 16个线程, 400000个工作项
+    ->Args({16, 800000});     // 16个线程, 800000个工作项
+    ->Args({16, 1000000});     // 16个线程, 1000000个工作项
 
 BENCHMARK_MAIN(); // 主函数，启动所有基准测试
