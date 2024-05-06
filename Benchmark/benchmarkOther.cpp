@@ -1,17 +1,12 @@
 #include <benchmark/benchmark.h>
-#include "../ThreadPool.h"
+#include "./other/ThreadPool/ThreadPool.h"
 #include <future>
 #include <functional>
-using namespace ccy;
-
 
 // 基准测试单次提交工作到线程池
 static void BM_SimpleThreadPool(benchmark::State& state) {
-    ThreadPoolConfig config;
-    config.secondary_thread_size_ = 0;
 
     ThreadPool pool(state.range(0)); // 以state.range(0)作为线程数
-    pool.setConfig(config);
     for (auto _ : state) {
 
         state.PauseTiming();
@@ -20,7 +15,7 @@ static void BM_SimpleThreadPool(benchmark::State& state) {
 
         for (int i = 0; i < state.range(1); ++i) {
             auto task = []{};
-            futures.emplace_back(pool.commit(task));
+            futures.emplace_back(pool.enqueue(task));
         }
 
         for (auto &f : futures) {
