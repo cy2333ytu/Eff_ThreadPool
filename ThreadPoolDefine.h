@@ -38,7 +38,7 @@ static const long QUEUE_EMPTY_INTERVAL = 3;                                     
 static const bool BIND_CPU_ENABLE = false;                                           // 是否开启绑定cpu模式（仅针对主线程）
 static const int PRIMARY_THREAD_POLICY = THREAD_SCHED_OTHER;                        // 主线程调度策略
 static const int SECONDARY_THREAD_POLICY = THREAD_SCHED_OTHER;                      // 辅助线程调度策略
-static const int PRIMARY_THREAD_PRIORITY = THREAD_MIN_PRIORITY;                     // 主线程调度优先级（取值范围0~99，配合调度策略一起使用，不建议不了解相关内容的童鞋做修改）
+static const int PRIMARY_THREAD_PRIORITY = THREAD_MIN_PRIORITY;                     // 主线程调度优先级
 static const int SECONDARY_THREAD_PRIORITY = THREAD_MIN_PRIORITY;                   // 辅助线程调度优先级（同上）
 
 static const int DEFAULT_TASK_STRATEGY = -1;                                         // 默认线程调度策略
