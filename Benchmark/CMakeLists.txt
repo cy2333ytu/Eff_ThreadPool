@@ -23,3 +23,18 @@ add_executable(benchmarkOther
         ./other/ThreadPool/ThreadPool.h
         )
 target_link_libraries(benchmarkOther benchmark::benchmark pthread)
+
+add_executable(benchmarkIOCal
+        ${SRC_LIST}
+        benchmark_IO_Cal.cpp
+        ../ThreadPool.cc
+        )
+target_link_libraries(benchmarkIOCal benchmark::benchmark pthread)
+
+add_executable(benchmarkOtherIOCal
+        ${SRC_LIST}
+        benchmarkOther_IO_Cal.cpp
+        ./other/ThreadPool/ThreadPool.h
+        )
+target_link_libraries(benchmarkOtherIOCal benchmark::benchmark pthread)
+

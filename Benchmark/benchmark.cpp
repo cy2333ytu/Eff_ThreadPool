@@ -8,7 +8,7 @@ using namespace ccy;
 // 基准测试单次提交工作到线程池
 static void BM_SimpleThreadPool(benchmark::State& state) {
     ThreadPoolConfig config;
-    config.secondary_thread_size_ = 0;
+    config.secondary_thread_size_ = 4;
 
     ThreadPool pool(state.range(0)); // 以state.range(0)作为线程数
     pool.setConfig(config);
