@@ -5,12 +5,15 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-
+#include <memory>
 using namespace ccy;
 
 static void simulate_workload(benchmark::State& state, int num_threads, int num_tasks, double io_task_ratio) {
-    ThreadPool pool(num_threads);
-    
+    std::unique_ptr<ThreadPool> pool(new ThreadPool(num_threads)); 
+
+    ThreadPoolConfig config;
+    config.secondary_thread_size_ = 16;
+    int prio = -10;
     std::default_random_engine generator;
     std::bernoulli_distribution distribution(io_task_ratio);
 
@@ -38,9 +41,9 @@ static void simulate_workload(benchmark::State& state, int num_threads, int num_
         std::vector<std::future<void>> futures;
         for (int i = 0; i < num_tasks; ++i) {
             if (distribution(generator)) {
-                futures.emplace_back(pool.commit(io_task));
+                futures.emplace_back(pool->commitWithPriority(io_task, prio));
             } else {
-                futures.emplace_back(pool.commit(compute_task));
+                futures.emplace_back(pool->commit(compute_task));
             }
         }
 
