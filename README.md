@@ -52,6 +52,13 @@
 
 EFF_ThreadPool 每秒能达到 **百万并发**，是 常规ThreadPool 的 1026323.918 / 6.277 ≈ **163491.889倍**
 
+使用1000000个计算密集型任务，分别对 EFF_ThreadPool 以及 常规ThreadPool 进行测试，测试结果如下
+EFF_ThreadPool 线程池的测试结果如下
+![EFF_ThreadPool](https://github.com/user-attachments/assets/8fe0b35c-b469-403b-a5a4-d2386d6a870c)
+常规 线程池的测试结果如下
+![threadpool](https://github.com/user-attachments/assets/b45c50d7-933a-484d-b55c-9ef59c574ad0)
+
+EFF_ThreadPool 的执行效率是常规线程池的 11085538807 / 1121013956 ≈ **9.889倍**
 
 # Eff_ThreadPool
 
